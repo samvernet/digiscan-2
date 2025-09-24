@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard KPI Maturité Digitale</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+  <!-- Formulaire d'accès -->
+  <div id="accessForm" class="access-container">
+    <div class="glass-card">
+      <div class="form-header">
+        <div class="lock-icon">🔒</div>
+        <h1>Accès Sécurisé</h1>
+        <p>Entrez vos informations pour accéder à votre rapport de maturité digitale</p>
+        <div class="demo-codes">
+          <p><strong>Codes de démonstration :</strong></p>
+          <div class="demo-list">
+            <div>• DEMO2024 (Toutes les entreprises)</div>
+            <div>• TECH2024 (TechInnovate Solutions)</div>
+            <div>• DIGITAL2024 (Digital Marketing Pro)</div>
+            <div>• CREATIVE2024 (Creative Studio Alpha)</div>
+          </div>
+        </div>
+      </div>
+
+      <form id="loginForm" class="access-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prénom</label>
+            <div class="input-container">
+              <span class="input-icon">👤</span>
+              <input type="text" id="firstName" placeholder="Prénom" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Nom</label>
+            <div class="input-container">
+              <span class="input-icon">👤</span>
+              <input type="text" id="lastName" placeholder="Nom" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Entreprise</label>
+          <div class="input-container">
+            <span class="input-icon">🏢</span>
+            <input type="text" id="company" placeholder="Nom de l'entreprise" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <div class="input-container">
+            <span class="input-icon">📧</span>
+            <input type="email" id="email" placeholder="email@entreprise.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Code d'accès</label>
+          <div class="input-container">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="accessCode" placeholder="Code d'accès" required>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          Accéder au Dashboard
+        </button>
+      </form>
+    </div>
+    <div class="logos-container">
+      <img src="https://raw.githubusercontent.com/ccivar-test/test-repo/main/logo_cci.png" alt="CCI VAR Logo"
+        class="logo">
+      <img src="https://raw.githubusercontent.com/ccivar-test/test-repo/main/logo_digiscan.png"
+        alt="Digiscan Logo" class="logo">
+    </div>
+  </div>
+
+  <!-- Écran de chargement -->
+  <div id="loadingScreen" class="loading-container" style="display: none;">
+    <div class="glass-card">
+      <div class="spinner"></div>
+      <h2>Chargement des données...</h2>
+      <p>Récupération de votre rapport de maturité digitale</p>
+    </div>
+  </div>
+
+  <!-- Dashboard principal -->
+  <div id="dashboard" class="dashboard-container" style="display: none;">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1>Dashboard Maturité Digitale</h1>
+          <p id="companiesCount">Analyse complète de X entreprises</p>
+        </div>
+        <div class="header-right">
+          <div class="global-score">
+            <div class="score-value" id="globalScore">0%</div>
+            <div class="score-label">Score Moyen Global</div>
+          </div>
+          <button id="backBtn" class="back-btn">Retour</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+      <!-- Sélection d'entreprise -->
+      <div class="selection-card glass-card">
+        <h2>Sélection d'Entreprise</h2>
+        <div class="selection-controls">
+          <div class="dropdown-container">
+            <button id="companyDropdown" class="dropdown-btn">
+              <div class="dropdown-content">
+                <div class="company-name">Sélectionner une entreprise</div>
+                <div class="company-score">Score: 0%</div>
+              </div>
+              <span class="dropdown-arrow">▼</span>
+            </button>
+            <div id="dropdownMenu" class="dropdown-menu">
+              <!-- Options générées dynamiquement -->
+            </div>
+          </div>
+          <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Rechercher une entreprise...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Boutons d'export -->
+      <div class="export-card glass-card">
+        <h3>Exporter les Rapports</h3>
+        <div class="export-buttons">
+          <button id="exportIndividual" class="export-btn individual">
+            📄 Exporter Rapport Personnel
+          </button>
+          <button id="exportAll" class="export-btn all">
+            📥 Télécharger Tous les Rapports
+          </button>
+        </div>
+      </div>
+
+      <!-- Graphiques -->
+      <div class="charts-container">
+        <div class="chart-card glass-card">
+          <h3 id="radarTitle">Comparaison Radar</h3>
+          <canvas id="radarChart"></canvas>
+        </div>
+        <div class="chart-card glass-card">
+          <h3 id="performanceTitle">Performance par Plateforme</h3>
+          <canvas id="performanceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Niveau de visibilité -->
+      <div id="visibilityCard" class="visibility-card glass-card">
+        <div class="visibility-content">
+          <div class="visibility-icon">🎯</div>
+          <div class="visibility-text">
+            <h3 id="visibilityLevel">Niveau de Visibilité : Modéré</h3>
+            <p id="visibilityDescription">Description du niveau de visibilité</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analyse détaillée -->
+      <div class="analysis-card glass-card">
+        <div class="analysis-header">
+          <div class="analysis-icon">📊</div>
+          <div>
+            <h2 id="analysisTitle">Etude de la visibilité web de votre entreprise</h2>
+            <p id="analysisScore">Score global : 0%</p>
+          </div>
+        </div>
+
+        <div id="platformsGrid" class="platforms-grid">
+          <!-- Plateformes générées dynamiquement -->
+        </div>
+      </div>
+    </div>
+    <div class="logos-container">
+      <img src="https://raw.githubusercontent.com/ccivar-test/test-repo/main/logo_cci.png" alt="CCI VAR Logo"
+        class="logo">
+      <img src="https://raw.githubusercontent.com/ccivar-test/test-repo/main/logo_digiscan.png"
+        alt="Digiscan Logo" class="logo">
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
